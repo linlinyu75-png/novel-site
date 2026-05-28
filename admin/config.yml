@@ -1,34 +1,32 @@
 backend:
-  name: github
-  repo: linlinyu75-png/novel-site
+  name: git-gateway
   branch: main
 
-media_folder: "images/uploads"
-public_folder: "/images/uploads"
-
-site_url: https://linlinyu75-png.github.io/novel-site
-display_url: https://linlinyu75-png.github.io/novel-site
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
 
 collections:
     - name: "novels"
-    label: "小說管理"
-    files:
-            - label: "全部小說"
-        name: "novels"
-        file: "data/novels.json"
-        fields:
-                    - label: "小說列表"
-            name: "novels"
-            widget: "list"
-            fields:
-                            - {label: "ID (英文數字)", name: "id", widget: "string", hint: "例如: my-novel-1"}
-                            - {label: "標題", name: "title", widget: "string"}
-                            - {label: "作者", name: "author", widget: "string", default: "零影"}
-                            - label: "分類"
-                name: "category"
-                widget: "select"
-                options: ["武俠", "校園", "青春", "古風", "仙俠", "同人", "現代都市", "耽美小說", "百合小說", "言情小說"]
-                            - {label: "簡介", name: "summary", widget: "text"}
-                            - {label: "封面圖網址", name: "cover", widget: "image", required: false}
-                            - {label: "內容", name: "content", widget: "markdown"}
-                            - {label: "更新日期", name: "updated", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false}
+    label: "小說"
+    folder: "_novels"
+    create: true
+    slug: "{{slug}}"
+    fields:
+            - {label: "書名", name: "title", widget: "string"}
+            - {label: "作者", name: "author", widget: "string", default: "linlinyu75"}
+            - {label: "封面圖", name: "cover", widget: "image", required: false}
+            - {label: "簡介", name: "description", widget: "text", required: false}
+            - {label: "狀態", name: "status", widget: "select", options: ["連載中","已完結"], default: "連載中"}
+            - {label: "標籤", name: "tags", widget: "list", required: false}
+
+    - name: "chapters"
+    label: "章節"
+    folder: "_chapters"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+            - {label: "所屬小說", name: "novel", widget: "relation", collection: "novels", value_field: "{{slug}}", search_fields: ["title"], display_fields: ["title"]}
+            - {label: "章節標題", name: "title", widget: "string"}
+            - {label: "章節序號", name: "chapter_number", widget: "number", value_type: "int", min: 1}
+            - {label: "發布日期", name: "date", widget: "datetime"}
+            - {label: "內容", name: "body", widget: "markdown"}
