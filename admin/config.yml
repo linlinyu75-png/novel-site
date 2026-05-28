@@ -5,18 +5,18 @@ media_folder: assets/uploads
 public_folder: /assets/uploads
 collections:
     - name: novels
-    label: 小說
+    label: Novels
     folder: _novels
     create: true
     slug: "{{slug}}"
     fields:
-            - {label: 書名, name: title, widget: string}
-            - {label: 作者, name: author, widget: string}
+            - {label: Title, name: title, widget: string}
+            - {label: Author, name: author, widget: string}
     - name: chapters
-    label: 章節
+    label: Chapters
     folder: _chapters
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-            - {label: 標題, name: title, widget: string}
-            - {label: 內容, name: body, widget: markdown}
+            - {label: Title, name: title, widget: string}
+            - {label: Content, name: body, widget: markdown}
