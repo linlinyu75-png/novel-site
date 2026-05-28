@@ -1,17 +1,18 @@
 backend:
-  name: github
-  repo: linlinyu75-png/novel-site
+  name: git-gateway
   branch: main
 
-media_folder: "images/uploads"
-public_folder: "/images/uploads"
+media_folder: static/images/uploads
+public_folder: /images/uploads
 
 collections:
-    - name: "posts"
-    label: "小說章節"
-    folder: "posts"
+    - name: novel
+    label: 小說章節
+    folder: content/novel
     create: true
+    slug: "{{slug}}"
     fields:
             - {label: "標題", name: "title", widget: "string"}
             - {label: "日期", name: "date", widget: "datetime"}
-            - {label: "內文", name: "body", widget: "markdown"}
+            - {label: "章節編號", name: "chapter", widget: "number", value_type: "int"}
+            - {label: "內容", name: "body", widget: "markdown"}
