@@ -1,0 +1,6 @@
+backend:
+  name: github
+  repo: linlinyu75-png/novel-site
+  branch: main
+  auth_type: pkce
+  app_id: Ov23liDVN73dv3zwCqmC
