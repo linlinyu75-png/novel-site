@@ -3,7 +3,7 @@ backend:
   repo: linlinyu75-png/novel-site
   branch: main
   auth_type: pkce
-  app_id: Iv1.你的CLIENT_ID
+  app_id: Ov23liDVN73dv3zwCqmC
 
 media_folder: static/images/uploads
 public_folder: /images/uploads
