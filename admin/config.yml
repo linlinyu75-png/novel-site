@@ -4,17 +4,14 @@ backend:
   branch: main
   auth_type: pkce
   app_id: Ov23liTDvarHc6RyX61x
-
-media_folder: "assets/uploads"
-public_folder: "/assets/uploads"
-
+media_folder: "static/images"
+public_folder: "/images"
 collections:
-    - name: "novel"
-    label: "小說章節"
-    folder: "_posts"
+    - name: "novels"
+    label: "小說"
+    folder: "novels"
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
     fields:
-            - { label: "標題", name: "title", widget: "string" }
-            - { label: "日期", name: "date", widget: "datetime" }
-            - { label: "內文", name: "body", widget: "markdown" }
+            - {label: "標題", name: "title", widget: "string"}
+            - {label: "內容", name: "body", widget: "markdown"}
