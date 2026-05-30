@@ -4,14 +4,3 @@ backend:
   branch: main
   auth_type: pkce
   app_id: Ov23liTDvarHc6RyX61x
-media_folder: "static/images"
-public_folder: "/images"
-collections:
-    - name: "novels"
-    label: "小說"
-    folder: "novels"
-    create: true
-    slug: "{{slug}}"
-    fields:
-            - {label: "標題", name: "title", widget: "string"}
-            - {label: "內容", name: "body", widget: "markdown"}
