@@ -1,61 +1,86 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的小說站</title>
-  <style>
-    body { font-family: -apple-system, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; line-height: 1.8; }
-    h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
-   .post { margin: 30px 0; }
-   .post a { font-size: 22px; color: #333; text-decoration: none; }
-   .post a:hover { color: #0070f3; }
-   .date { color: #999; font-size: 14px; }
-   .admin { position: fixed; bottom: 20px; right: 20px; background: #000; color: #fff; padding: 10px 15px; border-radius: 20px; text-decoration: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>零影小說站</title>
+<style>
+:root{--bg:#f0f4f1;--text:#1f2e25;--card:#e6ede8;--accent:#3a5f4b;--accent-light:#5a7d6b}
+[data-theme="dark"]{--bg:#0f1a14;--text:#d8e6dc;--card:#1a2a22;--accent:#7aa08e;--accent-light:#9bbdaa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Noto Serif TC","Songti TC","PingFang TC",serif;line-height:1.6;background-image: linear-gradient(rgba(58,95,75,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(58,95,75,0.03) 1px, transparent 1px);background-size:24px 24px}
+header{padding:1rem;position:sticky;top:0;background:var(--bg);border-bottom:1px solid rgba(58,95,75,0.15);z-index:10}
+.top{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+h1{font-size:1.4rem;color:var(--accent)}
+.btn{padding:.4rem.8rem;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;font-size:.9rem}
+.search{margin-top:.8rem;width:100%;padding:.6rem;border-radius:6px;border:1px solid rgba(58,95,75,0.2);background:var(--card);color:var(--text)}
+.categories{display:flex;gap:.5rem;overflow-x:auto;padding:1rem;scrollbar-width:none}
+.cat{white-space:nowrap;padding:.4rem 1rem;background:var(--card);border-radius:6px;cursor:pointer;font-size:.9rem;border:1px solid rgba(58,95,75,0.1)}
+.cat.active{background:var(--accent);color:white}
+main{padding:1rem;max-width:1000px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem}
+.card{background:var(--card);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;border:1px solid rgba(0,0,0,0.05)}
+.card:hover{transform:translateY(-3px)}
+.cover{width:100%;aspect-ratio:3/4;object-fit:cover}
+.info{padding:.7rem}
+.title{font-weight:600;font-size:.95rem}
+.meta{font-size:.8rem;opacity:.7;margin-top:.2rem}
+.summary{font-size:.8rem;opacity:.8;margin-top:.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#reader{position:fixed;inset:0;background:var(--bg);z-index:100;padding:1.5rem;overflow-y:auto;display:none}
+#reader.active{display:block}
+.admin-link{position:fixed;bottom:20px;right:20px;background:var(--accent);color:white;padding:.6rem 1rem;border-radius:50px;text-decoration:none;font-size:.85rem}
+</style>
 </head>
 <body>
-  <h1>我的小說</h1>
-  <div id="posts">讀取中...</div>
-  <a href="/admin/" class="admin">寫文章</a>
+<header><div class="top"><h1>零影小說站</h1><button class="btn" onclick="toggleTheme()">🌓</button></div><input class="search" id="search" placeholder="搜尋小說..." oninput="filter()"></header>
+<div class="categories" id="cats"></div><main><div class="grid" id="grid"></div></main>
+<div id="reader"><button class="btn" onclick="closeReader()">← 返回</button><div id="readContent"></div></div>
+<a href="/admin/" class="admin-link">✏️ 管理</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script>
-    const repo = 'linlinyu75-png/novel-site';
-    const folder = 'novels';
-    
-    fetch(`https://api.github.com/repos/${repo}/contents/${folder}`)
-   .then(res => res.json())
-   .then(files => {
-        const postsDiv = document.getElementById('posts');
-        postsDiv.innerHTML = '';
-        if (!Array.isArray(files)) {
-          postsDiv.innerHTML = '還沒發文，點右下角寫第一篇';
-          return;
-        }
-        files.reverse().forEach(file => {
-          if (file.name.endsWith('.md')) {
-            fetch(file.download_url)
-           .then(res => res.text())
-           .then(md => {
-                const title = md.match(/title:\s*(.*)/)?.[1] || file.name;
-                const date = new Date(file.name.split('-').slice(0,3).join('-')).toLocaleDateString();
-                const slug = file.name.replace('.md', '');
-                
-                const postEl = document.createElement('div');
-                postEl.className = 'post';
-                postEl.innerHTML = `
-                  <a href="post.html?file=${slug}">${title}</a>
-                  <div class="date">${date}</div>
-                `;
-                postsDiv.appendChild(postEl);
-              });
-          }
-        });
-        if (files.length === 0) postsDiv.innerHTML = '還沒發文，點右下角寫第一篇';
-      }).catch(() => {
-        document.getElementById('posts').innerHTML = '還沒發文，點右下角寫第一篇';
-      });
-  </script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script>
+let novels=[],filtered=[],currentCat='全部';
+const cats=['全部','武俠','校園','青春','古風','仙俠','同人','現代都市','耽美小說','百合小說','言情小說'];
+const repo = 'linlinyu75-png/novel-site';
+
+function init(){
+  document.getElementById('cats').innerHTML=cats.map(c=>`<div class="cat ${c==='全部'?'active':''}" onclick="setCat('${c}')">${c}</div>`).join('');
+
+  // 改成讀 /novels 資料夾的.md 檔
+  fetch(`https://api.github.com/repos/${repo}/contents/novels`)
+ .then(r=>r.json())
+ .then(async files=>{
+    if(!Array.isArray(files)) return;
+    const posts = await Promise.all(files.filter(f=>f.name.endsWith('.md')).map(async file=>{
+      const res = await fetch(file.download_url);
+      const text = await res.text();
+      const match = text.match(/---\n([\s\S]*?)\n---/);
+      const meta = match? jsyaml.load(match[1]) : {};
+      const body = text.replace(/---\n[\s\S]*?\n---/, '').trim();
+      return {
+        id: file.name.replace('.md',''),
+        title: meta.title || '無標題',
+        author: meta.author || '佚名',
+        category: meta.category || '現代都市',
+        cover: meta.cover || 'https://picsum.photos/300/400',
+        summary: meta.summary || body.slice(0,50)+'...',
+        content: marked.parse(body)
+      }
+    }));
+    novels=posts;filtered=posts;render();
+  });
+
+  if(localStorage.theme==='dark')document.documentElement.setAttribute('data-theme','dark')
+}
+
+function render(){document.getElementById('grid').innerHTML=filtered.map(n=>`<div class="card" onclick="openNovel('${n.id}')"><img class="cover" src="${n.cover}"><div class="info"><div class="title">${n.title}</div><div class="meta">${n.author} · ${n.category}</div><div class="summary">${n.summary}</div></div></div>`).join('')}
+function setCat(c){currentCat=c;document.querySelectorAll('.cat').forEach(e=>e.classList.toggle('active',e.textContent===c));filter()}
+function filter(){const q=document.getElementById('search').value.toLowerCase();filtered=novels.filter(n=>(currentCat==='全部'||n.category===currentCat)&&(n.title.toLowerCase().includes(q)||n.author.toLowerCase().includes(q)));render()}
+function openNovel(id){const n=novels.find(x=>x.id===id);document.getElementById('readContent').innerHTML=`<h2>${n.title}</h2><p>${n.author} · ${n.category}</p><div style="white-space:pre-wrap;margin-top:1rem">${n.content}</div>`;document.getElementById('reader').classList.add('active')}
+function closeReader(){document.getElementById('reader').classList.remove('active')}
+function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');localStorage.theme=d?'light':'dark'}
+init()
+</script>
 </body>
 </html>
