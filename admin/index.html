@@ -4,9 +4,42 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>零影小說站後台</title>
-  <link href="/admin/config.json" type="application/json" rel="cms-config-url" />
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.1.10/dist/decap-cms.js"></script>
+  <script>
+    window.CMS_MANUAL_INIT = true;
+    const { CMS, initCMS: init } = window;
+    init({
+      config: {
+        backend: {
+          name: "github",
+          repo: "linlinyu75-png/novel-site",
+          branch: "main",
+          auth_type: "pkce",
+          app_id: "Ov23li4cdnuFcdwjATJe"
+        },
+        media_folder: "static/images",
+        public_folder: "/images",
+        collections: [
+          {
+            name: "novels",
+            label: "小說",
+            folder: "novels",
+            create: true,
+            slug: "{{year}}-{{month}}-{{day}}-{{slug}}",
+            fields: [
+              { label: "標題", name: "title", widget: "string" },
+              { label: "作者", name: "author", widget: "string", default: "零影" },
+              { label: "分類", name: "category", widget: "select", options: ["武俠","校園","青春","古風","仙俠","同人","現代都市","耽美小說","百合小說","言情小說"], default: "青春" },
+              { label: "封面圖網址", name: "cover", widget: "string", required: false },
+              { label: "簡介", name: "summary", widget: "text", required: false },
+              { label: "內文", name: "body", widget: "markdown" }
+            ]
+          }
+        ]
+      }
+    });
+  </script>
 </body>
 </html>
