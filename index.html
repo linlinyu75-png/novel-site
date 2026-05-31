@@ -21,20 +21,27 @@ main{padding:1rem;max-width:1000px;margin:0 auto}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem}
 .card{background:var(--card);border-radius:8px;overflow:hidden;cursor:pointer;transition:.2s;border:1px solid rgba(0,0,0,0.05)}
 .card:hover{transform:translateY(-3px)}
-.cover{width:100%;aspect-ratio:3/4;object-fit:cover}
+.cover{width:100%;aspect-ratio:3/4;object-fit:cover;background:#ddd}
 .info{padding:.7rem}
 .title{font-weight:600;font-size:.95rem}
 .meta{font-size:.8rem;opacity:.7;margin-top:.2rem}
 .summary{font-size:.8rem;opacity:.8;margin-top:.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #reader{position:fixed;inset:0;background:var(--bg);z-index:100;padding:1.5rem;overflow-y:auto;display:none}
 #reader.active{display:block}
-.admin-link{position:fixed;bottom:20px;right:20px;background:var(--accent);color:white;padding:.6rem 1rem;border-radius:50px;text-decoration:none;font-size:.85rem}
+.reader-content{max-width:700px;margin:0 auto}
+.reader-content img{max-width:100%}
+.reader-content h2{margin-bottom:.5rem;color:var(--accent)}
+.reader-meta{opacity:.7;margin-bottom:1.5rem}
+.reader-body{white-space:pre-wrap;font-size:1rem;line-height:1.8}
+.admin-link{position:fixed;bottom:20px;right:20px;background:var(--accent);color:white;padding:.6rem 1rem;border-radius:50px;text-decoration:none;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.loading{text-align:center;padding:3rem;opacity:.6}
 </style>
 </head>
 <body>
 <header><div class="top"><h1>零影小說站</h1><button class="btn" onclick="toggleTheme()">🌓</button></div><input class="search" id="search" placeholder="搜尋小說..." oninput="filter()"></header>
-<div class="categories" id="cats"></div><main><div class="grid" id="grid"></div></main>
-<div id="reader"><button class="btn" onclick="closeReader()">← 返回</button><div id="readContent"></div></div>
+<div class="categories" id="cats"></div>
+<main><div class="grid" id="grid"><div class="loading">載入中...</div></div></main>
+<div id="reader"><button class="btn" onclick="closeReader()">← 返回</button><div class="reader-content" id="readContent"></div></div>
 <a href="/admin/" class="admin-link">✏️ 管理</a>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -46,12 +53,13 @@ const repo = 'linlinyu75-png/novel-site';
 
 function init(){
   document.getElementById('cats').innerHTML=cats.map(c=>`<div class="cat ${c==='全部'?'active':''}" onclick="setCat('${c}')">${c}</div>`).join('');
-
-  // 改成讀 /novels 資料夾的.md 檔
   fetch(`https://api.github.com/repos/${repo}/contents/novels`)
- .then(r=>r.json())
- .then(async files=>{
-    if(!Array.isArray(files)) return;
+.then(r=>r.json())
+.then(async files=>{
+    if(!Array.isArray(files)) {
+      document.getElementById('grid').innerHTML='<div class="loading">還沒有文章，快去後台發一篇吧！</div>';
+      return;
+    }
     const posts = await Promise.all(files.filter(f=>f.name.endsWith('.md')).map(async file=>{
       const res = await fetch(file.download_url);
       const text = await res.text();
@@ -61,23 +69,28 @@ function init(){
       return {
         id: file.name.replace('.md',''),
         title: meta.title || '無標題',
-        author: meta.author || '佚名',
+        author: meta.author || '零影',
         category: meta.category || '現代都市',
-        cover: meta.cover || 'https://picsum.photos/300/400',
-        summary: meta.summary || body.slice(0,50)+'...',
+        cover: meta.cover || `https://picsum.photos/seed/${file.name}/300/400`,
+        summary: meta.summary || body.slice(0,60)+'...',
         content: marked.parse(body)
       }
     }));
-    novels=posts;filtered=posts;render();
-  });
-
+    novels=posts.reverse();filtered=posts;render();
+  })
+.catch(()=>{document.getElementById('grid').innerHTML='<div class="loading">載入失敗，請檢查網路</div>'});
   if(localStorage.theme==='dark')document.documentElement.setAttribute('data-theme','dark')
 }
-
-function render(){document.getElementById('grid').innerHTML=filtered.map(n=>`<div class="card" onclick="openNovel('${n.id}')"><img class="cover" src="${n.cover}"><div class="info"><div class="title">${n.title}</div><div class="meta">${n.author} · ${n.category}</div><div class="summary">${n.summary}</div></div></div>`).join('')}
+function render(){
+  if(filtered.length===0){
+    document.getElementById('grid').innerHTML='<div class="loading">沒有找到文章</div>';
+    return;
+  }
+  document.getElementById('grid').innerHTML=filtered.map(n=>`<div class="card" onclick="openNovel('${n.id}')"><img class="cover" src="${n.cover}" onerror="this.src='https://picsum.photos/300/400'"><div class="info"><div class="title">${n.title}</div><div class="meta">${n.author} · ${n.category}</div><div class="summary">${n.summary}</div></div></div>`).join('')
+}
 function setCat(c){currentCat=c;document.querySelectorAll('.cat').forEach(e=>e.classList.toggle('active',e.textContent===c));filter()}
 function filter(){const q=document.getElementById('search').value.toLowerCase();filtered=novels.filter(n=>(currentCat==='全部'||n.category===currentCat)&&(n.title.toLowerCase().includes(q)||n.author.toLowerCase().includes(q)));render()}
-function openNovel(id){const n=novels.find(x=>x.id===id);document.getElementById('readContent').innerHTML=`<h2>${n.title}</h2><p>${n.author} · ${n.category}</p><div style="white-space:pre-wrap;margin-top:1rem">${n.content}</div>`;document.getElementById('reader').classList.add('active')}
+function openNovel(id){const n=novels.find(x=>x.id===id);document.getElementById('readContent').innerHTML=`<h2>${n.title}</h2><div class="reader-meta">${n.author} · ${n.category}</div><div class="reader-body">${n.content}</div>`;document.getElementById('reader').classList.add('active');window.scrollTo(0,0)}
 function closeReader(){document.getElementById('reader').classList.remove('active')}
 function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');localStorage.theme=d?'light':'dark'}
 init()
