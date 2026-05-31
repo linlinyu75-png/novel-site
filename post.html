@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; line-height: 1.8; }
+    a { color: #0070f3; text-decoration: none; }
+    pre { background: #f6f6f6; padding: 15px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <a href="/">← 回首頁</a>
+  <div id="content">讀取中...</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get('file');
+    const repo = 'linlinyu75-png/novel-site';
+    
+    fetch(`https://raw.githubusercontent.com/${repo}/main/novels/${file}.md`)
+   .then(res => res.text())
+   .then(md => {
+        const body = md.replace(/---[\s\S]*?---/, '');
+        const title = md.match(/title:\s*(.*)/)?.[1] || '無標題';
+        document.title = title;
+        document.getElementById('content').innerHTML = `<h1>${title}</h1>` + marked.parse(body);
+      });
+  </script>
+</body>
+</html>
