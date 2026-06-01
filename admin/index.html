@@ -4,17 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>零影小說站後台</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <script src="https://unpkg.com/netlify-cms@2.10.192/dist/netlify-cms.js"></script>
+  <script src="https://unpkg.com/decap-cms@3.0.12/dist/decap-cms.js"></script>
   <script>
     CMS.init({
       config: {
         backend: {
           name: "github",
-          repo: "linlinyu75-png/novel-site", 
-          branch: "main"
+          repo: "linlinyu75-png/novel-site",
+          branch: "main",
+          base_url: "https://decap-oauth.vercel.app",
+          auth_endpoint: "/api/auth"
         },
         media_folder: "static/images",
         public_folder: "/images",
