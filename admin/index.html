@@ -1,23 +1,11 @@
 <style>
-/* 手機版：讓左邊欄固定，不會跟著滑動 */
-@media (max-width: 768px) {
-  [class*="SidebarContainer"] {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    height: 100vh !important;
-    z-index: 999 !important;
-    transform: translateX(-100%) !important;
-    transition: transform 0.2s !important;
+/* 只在手機藏側邊欄，電腦版不影響 */
+@media only screen and (max-width: 768px) {
+  aside[class*="Sidebar"] {
+    display: none !important;
   }
-  /* 點左上三條線才滑出來 */
-  [class*="SidebarContainer"][class*="expanded"] {
-    transform: translateX(0) !important;
-  }
-  /* 主編輯區撐滿，不要被擠到 */
-  [class*="AppMainContainer"] {
+  div[class*="Main"] {
     margin-left: 0 !important;
-    width: 100% !important;
   }
 }
 </style>
