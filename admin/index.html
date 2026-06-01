@@ -1,11 +1,42 @@
-<style>
-/* 只在手機藏側邊欄，電腦版不影響 */
-@media only screen and (max-width: 768px) {
-  aside[class*="Sidebar"] {
-    display: none !important;
-  }
-  div[class*="Main"] {
-    margin-left: 0 !important;
-  }
-}
-</style>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>零影小說站後台</title>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@3.0.12/dist/decap-cms.js"></script>
+  <script>
+    CMS.init({
+      config: {
+        backend: {
+          name: "github",
+          repo: "linlinyu75-png/novel-site",
+          branch: "main"
+        },
+        media_folder: "static/images/uploads",
+        public_folder: "/static/images/uploads",
+        collections: [
+          {
+            name: "novels",
+            label: "小說章節",
+            folder: "novels",
+            create: true,
+            slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}",
+            fields: [
+              {label: "書名", name: "book_title", widget: "string"},
+              {label: "作者", name: "author", widget: "string", default: "零影"},
+              {label: "書本簡介", name: "book_description", widget: "text", required: false, hint: "只在第一章填就好"},
+              {label: "封面圖網址", name: "cover", widget: "string", required: false, hint: "貼 Imgur 網址"},
+              {label: "章節序號", name: "chapter_order", widget: "number", valueType: "int", default: 1},
+              {label: "章節標題", name: "title", widget: "string"},
+              {label: "章節內容", name: "body", widget: "markdown"}
+            ]
+          }
+        ]
+      }
+    });
+  </script>
+</body>
+</html>
