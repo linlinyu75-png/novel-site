@@ -1,6 +1,0 @@
-backend:
-  name: github
-  repo: linlinyu75-png/novel-site
-  branch: main
-collections:
-    - {name: novels, label: 小說, folder: novels}
