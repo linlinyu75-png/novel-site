@@ -1,44 +1,44 @@
-<script>
-  CMS.init({
-    config: {
-      backend: {
-        name: "github",
-        repo: "linlinyu75-png/novel-site",
-        branch: "main",
-        base_url: "https://decap-oauth.vercel.app",
-        auth_endpoint: "/api/auth"
-      },
-      media_folder: "static/images",
-      public_folder: "/images",
-      collections: [
-        {
-          name: "books",
-          label: "書籍",
-          folder: "books",
-          create: true,
-          slug: "{{slug}}",
-          fields: [
-            {label: "書名", name: "title", widget: "string"},
-            {label: "作者", name: "author", widget: "string", default: "零影"},
-            {label: "封面", name: "cover", widget: "image"},
-            {label: "簡介", name: "description", widget: "text"},
-            {label: "狀態", name: "status", widget: "select", options: ["連載中", "已完結"], default: "連載中"}
-          ]
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>零影小說站後台</title>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@3.0.12/dist/decap-cms.js"></script>
+  <script>
+    CMS.init({
+      config: {
+        backend: {
+          name: "github",
+          repo: "linlinyu75-png/novel-site",
+          branch: "main",
+          base_url: "https://decap-oauth.vercel.app",
+          auth_endpoint: "/api/auth"
         },
-        {
-          name: "chapters",
-          label: "章節",
-          folder: "chapters",
-          create: true,
-          slug: "{{fields.book}}_{{fields.order}}_{{slug}}",
-          fields: [
-            {label: "所屬書籍", name: "book", widget: "relation", collection: "books", value_field: "title", search_fields: ["title"], display_fields: ["title"]},
-            {label: "章節序號", name: "order", widget: "number", value_type: "int", min: 1, default: 1},
-            {label: "章節標題", name: "title", widget: "string"},
-            {label: "章節內容", name: "body", widget: "markdown"}
-          ]
-        }
-      ]
-    }
-  })
-</script>
+        media_folder: "static/images",
+        public_folder: "/images",
+        collections: [
+          {
+            name: "novels",
+            label: "小說章節",
+            folder: "novels",
+            create: true,
+            slug: "{{fields.book_title}}_{{fields.chapter_order}}_{{slug}}",
+            fields: [
+              {label: "書名", name: "book_title", widget: "string", hint: "同一本書的每章都要填一樣"},
+              {label: "書本簡介", name: "book_description", widget: "text", required: false, hint: "只在第一章填就好"},
+              {label: "封面圖", name: "cover", widget: "image", required: false, hint: "只在第一章上傳就好"},
+              {label: "章節序號", name: "chapter_order", widget: "number", value_type: "int", default: 1, min: 1},
+              {label: "章節標題", name: "title", widget: "string", hint: "例如：第一章 破裂的開始"},
+              {label: "作者", name: "author", widget: "string", default: "零影"},
+              {label: "章節內容", name: "body", widget: "markdown"}
+            ]
+          }
+        ]
+      }
+    })
+  </script>
+</body>
+</html>
