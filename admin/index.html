@@ -6,5 +6,29 @@
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.0.12/dist/decap-cms.js"></script>
+  <script>
+    CMS.init({
+      config: {
+        backend: {
+          name: 'github',
+          repo: 'linlinyu75-png/novel-site',
+          branch: 'main'
+        },
+        media_folder: 'static/images',
+        public_folder: '/images',
+        collections: [{
+          name: 'novels',
+          label: '小說',
+          folder: 'novels',
+          create: true,
+          slug: '{{slug}}',
+          fields: [
+            {label: '標題', name: 'title', widget: 'string'},
+            {label: '內文', name: 'body', widget: 'markdown'}
+          ]
+        }]
+      }
+    });
+  </script>
 </body>
 </html>
