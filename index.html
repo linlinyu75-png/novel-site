@@ -8,51 +8,98 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, "Noto Sans TC", sans-serif;
-      background: #1a1a1a;
-      color: #e0e0e0;
+      background: #e8f5e9;
+      color: #1b5e20;
       padding: 20px;
       line-height: 1.8;
     }
-   .container { max-width: 800px; margin: 0 auto; }
-    h1 { text-align: center; margin: 20px 0 40px; color: #fff; cursor: pointer; }
-   .book {
-      background: #2a2a2a;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 30px;
-      border: 1px solid #3a3a3a;
-    }
-   .book-title { font-size: 28px; margin-bottom: 8px; color: #fff; }
-   .book-meta { color: #999; font-size: 14px; margin-bottom: 16px; }
-   .book-desc { margin-bottom: 20px; color: #ccc; }
-   .book-cover { max-width: 200px; border-radius: 4px; margin-bottom: 16px; }
-   .chapter-list { list-style: none; }
-   .chapter-list li {
-      padding: 12px 0;
-      border-bottom: 1px solid #3a3a3a;
+ .container { max-width: 800px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      margin: 20px 0 40px;
+      color: #2e7d32;
       cursor: pointer;
+      font-size: 32px;
     }
-   .chapter-list li:last-child { border-bottom: none; }
-   .chapter-list li:hover { background: #333; margin: 0 -24px; padding: 12px 24px; }
-   .chapter-title { color: #7dd3fc; font-size: 16px; }
-   .chapter-order { color: #666; margin-right: 8px; font-size: 14px; }
-   .reader {
-      background: #2a2a2a;
+  /* 書本卡片 */
+ .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+ .book-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #a5d6a7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+ .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      border-color: #66bb6a;
+    }
+ .book-cover {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
       border-radius: 8px;
-      padding: 24px;
-      border: 1px solid #3a3a3a;
+      margin-bottom: 12px;
+      background: #f1f8e9;
     }
-   .reader h2 { margin-bottom: 20px; color: #fff; }
-   .reader-content { white-space: pre-wrap; color: #ddd; }
-   .reader-content img { max-width: 100%; border-radius: 4px; margin: 16px 0; }
-   .back-btn {
-      color: #7dd3fc;
+ .book-title { font-size: 20px; color: #1b5e20; margin-bottom: 6px; }
+ .book-meta { color: #388e3c; font-size: 14px; }
+ .book-desc { color: #2e7d32; font-size: 14px; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* 章節目錄頁 */
+ .book-detail {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      border: 2px solid #a5d6a7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+ .book-detail.book-title { font-size: 28px; margin-bottom: 8px; }
+ .book-detail.book-cover { max-width: 200px; height: auto; float: left; margin-right: 20px; margin-bottom: 20px; }
+ .chapter-list { list-style: none; clear: both; }
+ .chapter-list li {
+      padding: 14px 16px;
+      border-bottom: 1px solid #c8e6c9;
+      cursor: pointer;
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+ .chapter-list li:hover { background: #f1f8e9; }
+ .chapter-title { color: #2e7d32; font-size: 16px; font-weight: 500; }
+ .chapter-order { color: #66bb6a; margin-right: 8px; font-size: 14px; }
+
+  /* 閱讀頁 */
+ .reader {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      border: 2px solid #a5d6a7;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+ .reader h2 { margin-bottom: 20px; color: #1b5e20; }
+ .reader-content { white-space: pre-wrap; color: #2e7d32; font-size: 17px; }
+ .reader-content img { max-width: 100%; border-radius: 8px; margin: 16px 0; }
+ .back-btn {
+      color: #388e3c;
       margin-bottom: 20px;
       display: inline-block;
       cursor: pointer;
+      font-weight: 500;
     }
-   .back-btn:hover { color: #fff; }
-   .loading { text-align: center; color: #666; padding: 40px; }
+ .back-btn:hover { color: #1b5e20; }
+ .loading { text-align: center; color: #66bb6a; padding: 40px; }
+
+  @media (max-width: 600px) {
+   .book-grid { grid-template-columns: 1fr; }
+   .book-detail.book-cover { float: none; max-width: 100%; }
+  }
   </style>
 </head>
 <body>
@@ -69,34 +116,23 @@
     async function loadNovels() {
       const repo = 'linlinyu75-png/novel-site';
       const api = `https://api.github.com/repos/${repo}/contents/novels`;
-
       try {
         const res = await fetch(api);
         const files = await res.json();
-
         const posts = await Promise.all(
           files.filter(f => f.name.endsWith('.md')).map(async file => {
             const content = await fetch(file.download_url).then(r => r.text());
             const match = content.match(/---\n([\s\S]*?)\n---\n([\s\S]*)/);
             if (!match) return null;
-
             const fm = {};
             match[1].split('\n').forEach(line => {
               const [key,...rest] = line.split(':');
               fm[key.trim()] = rest.join(':').trim().replace(/^['"]|['"]$/g, '');
             });
-
-            return {
-             ...fm,
-              body: match[2].trim(),
-              slug: file.name.replace('.md', '')
-            };
+            return {...fm, body: match[2].trim(), slug: file.name.replace('.md', '') };
           })
         );
-
         allPosts = posts.filter(p => p);
-
-        // 按書分組
         allBooks = {};
         allPosts.forEach(post => {
           const bookTitle = post.book_title || '未命名';
@@ -105,17 +141,15 @@
               title: bookTitle,
               author: post.author,
               description: post.book_description,
-              cover: post.cover,
+              cover: post.cover || 'https://i.imgur.com/Yt6W1gh.png',
               chapters: []
             };
           }
           allBooks[bookTitle].chapters.push(post);
         });
-
         Object.values(allBooks).forEach(book => {
           book.chapters.sort((a, b) => (parseInt(a.chapter_order) || 0) - (parseInt(b.chapter_order) || 0));
         });
-
         showHome();
       } catch (e) {
         document.getElementById('app').innerHTML = '<p class="loading">載入失敗，請重整</p>';
@@ -123,12 +157,32 @@
     }
 
     function showHome() {
-      const html = Object.values(allBooks).map(book => `
-        <div class="book">
-          ${book.cover? `<img src="${book.cover}" class="book-cover">` : ''}
+      const html = `
+        <div class="book-grid">
+          ${Object.values(allBooks).map(book => `
+            <div class="book-card" onclick="showBook('${book.title}')">
+              <img src="${book.cover}" class="book-cover" onerror="this.src='https://i.imgur.com/Yt6W1gh.png'">
+              <h2 class="book-title">《${book.title}》</h2>
+              <div class="book-meta">作者：${book.author || '零影'}</div>
+              ${book.description? `<div class="book-desc">${book.description}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+      document.getElementById('app').innerHTML = html || '<p class="loading">還沒有小說，快去後台發文吧！</p>';
+      window.scrollTo(0, 0);
+    }
+
+    function showBook(bookTitle) {
+      const book = allBooks[bookTitle];
+      if (!book) return;
+      const html = `
+        <div class="book-detail">
+          <div class="back-btn" onclick="showHome()">← 返回書櫃</div>
+          <img src="${book.cover}" class="book-cover" onerror="this.src='https://i.imgur.com/Yt6W1gh.png'">
           <h2 class="book-title">《${book.title}》</h2>
           <div class="book-meta">作者：${book.author || '零影'}</div>
-          ${book.description? `<div class="book-desc">${book.description}</div>` : ''}
+          ${book.description? `<div class="book-desc" style="margin-bottom:20px;">${book.description}</div>` : ''}
           <ul class="chapter-list">
             ${book.chapters.map(ch => `
               <li onclick="showChapter('${ch.slug}')">
@@ -138,18 +192,17 @@
             `).join('')}
           </ul>
         </div>
-      `).join('');
-
-      document.getElementById('app').innerHTML = html || '<p class="loading">還沒有小說，快去後台發文吧！</p>';
+      `;
+      document.getElementById('app').innerHTML = html;
+      window.scrollTo(0, 0);
     }
 
     function showChapter(slug) {
       const post = allPosts.find(p => p.slug === slug);
       if (!post) return;
-
       const html = `
         <div class="reader">
-          <div class="back-btn" onclick="showHome()">← 返回目錄</div>
+          <div class="back-btn" onclick="showBook('${post.book_title}')">← 返回目錄</div>
           <h2>${post.title}</h2>
           <div class="reader-content">${marked.parse(post.body)}</div>
         </div>
@@ -157,7 +210,6 @@
       document.getElementById('app').innerHTML = html;
       window.scrollTo(0, 0);
     }
-
     loadNovels();
   </script>
 </body>
