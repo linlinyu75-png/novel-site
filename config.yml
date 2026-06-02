@@ -1,0 +1,21 @@
+backend:
+  name: github
+  repo: linlinyu75-png/novel-site
+  branch: main
+media_folder: "static/images/uploads"
+public_folder: "/static/images/uploads"
+collections:
+    - name: "novels"
+    label: "小說章節"
+    folder: "novels"
+    create: true
+    hide_sidebar_for_single_collection: true
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    fields:
+            - {label: "書名", name: "book_title", widget: "string"}
+            - {label: "作者", name: "author", widget: "string", default: "零影"}
+            - {label: "書本簡介", name: "book_description", widget: "text", required: false}
+            - {label: "封面圖網址", name: "cover", widget: "string", required: false}
+            - {label: "章節序號", name: "chapter_order", widget: "number", valueType: "int"}
+            - {label: "章節標題", name: "title", widget: "string"}
+            - {label: "章節內容", name: "body", widget: "markdown"}
