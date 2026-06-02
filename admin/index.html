@@ -1,43 +1,24 @@
-<!doctype html>
-<html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>零影小說站後台</title>
+  <style>
+    @media (max-width: 768px) {
+      #nc-root aside {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        height: 100vh !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.2s !important;
+        z-index: 999 !important;
+      }
+      #nc-root aside.show {
+        transform: translateX(0) !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.0.12/dist/decap-cms.js"></script>
-  <script>
-    CMS.init({
-      config: {
-        backend: {
-          name: "github",
-          repo: "linlinyu75-png/novel-site",
-          branch: "main"
-        },
-        media_folder: "static/images/uploads",
-        public_folder: "/static/images/uploads",
-        collections: [
-          {
-            name: "novels",
-            label: "小說章節",
-            folder: "novels",
-            create: true,
-            hide_sidebar_for_single_collection: true,
-            slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}",
-            fields: [
-              {label: "書名", name: "book_title", widget: "string"},
-              {label: "作者", name: "author", widget: "string", default: "零影"},
-              {label: "書本簡介", name: "book_description", widget: "text", required: false, hint: "只在第一章填就好"},
-              {label: "封面圖網址", name: "cover", widget: "string", required: false, hint: "貼 Imgur 網址，如 https://i.imgur.com/xxx.jpg"},
-              {label: "章節序號", name: "chapter_order", widget: "number", valueType: "int", default: 1},
-              {label: "章節標題", name: "title", widget: "string"},
-              {label: "章節內容", name: "body", widget: "markdown"}
-            ]
-          }
-        ]
-      }
-    });
-  </script>
-</body>
-</html>
+  ...下面不動...
